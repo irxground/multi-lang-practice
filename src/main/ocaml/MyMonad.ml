@@ -8,9 +8,9 @@ let rec fold_right_my_list f seed = function
   | MyNil         -> seed
   | MyCons(x, xs) -> f x (fold_right_my_list f seed xs)
 
-let rec string_of_int_list = function
+let rec string_of_my_list string_of_a = function
   | MyNil -> ""
-  | MyCons(a, lst) -> (string_of_int a) ^ ". " ^ string_of_int_list lst
+  | MyCons(a, lst) -> (string_of_a a) ^ ". " ^ string_of_my_list string_of_a lst
 
 (* ---- ---- ---- define MyMonad ---- ---- ---- *)
 module type Monadaa = sig
@@ -29,7 +29,7 @@ end
 
 (* ---- ---- ---- appl MyMonad ---- ---- ---- *)
 
-module Monadaa_my_list : Monadaa = struct
+module Monadaa_my_list : Monadaa with type 'a m = 'a my_list = struct
   type 'a m = 'a my_list
 
   let map f = fold_right_my_list (fun x y -> MyCons(f x, y)) MyNil
@@ -43,15 +43,17 @@ end
 module MyListUsage = MonadaaUsage(Monadaa_my_list)
 open MyListUsage
 
-let ( * ) f g = fun x -> f(g(x));;
 let main =
+  (* Helper functions *)
+  let itos = string_of_int in
+  let ttos (x, y) = "(" ^ (itos x) ^ "." ^ (itos y) ^ ")" in
+  let puts_i_list x = print_endline (string_of_my_list itos x) in
+  let puts_t_list x = print_endline (string_of_my_list ttos x) in
+  (* values *)
   let one = MyCons( 1, MyCons( 2, MyCons( 3, MyNil))) in
   let ten = MyCons(10, MyCons(20, MyCons(30, MyNil))) in
-  (*
-  (print_endline * string_of_int_list) (flat one ten ( + ));
-  (print_endline * string_of_int_list) (one *** ten);
-  *)  
-  (print_endline * string_of_int_list) one;
+  puts_i_list (flat one ten (+));
+  puts_t_list (one *** ten);
   ()
 
 
