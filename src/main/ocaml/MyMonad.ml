@@ -8,9 +8,12 @@ let rec fold_right_my_list f seed = function
   | MyNil         -> seed
   | MyCons(x, xs) -> f x (fold_right_my_list f seed xs)
 
-let rec string_of_my_list string_of_a = function
-  | MyNil -> ""
-  | MyCons(a, lst) -> (string_of_a a) ^ ". " ^ string_of_my_list string_of_a lst
+let rec fold_left_my_list f seed = function
+  | MyNil         -> seed
+  | MyCons(x, xs) -> fold_left_my_list f (f seed x) xs
+
+let string_of_my_list string_of_a =
+  fold_left_my_list (fun str a -> str ^ (string_of_a a) ^ ". ") ""
 
 (* ---- ---- ---- define MyMonad ---- ---- ---- *)
 module type Monadaa = sig

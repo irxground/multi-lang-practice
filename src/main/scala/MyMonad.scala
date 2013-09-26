@@ -5,28 +5,24 @@ object Program {
   // ---- ---- ---- define MyList ---- ---- ----
   sealed trait MyList[+T] {
     def foldRight[U](u: U)(f: (T, U) => U): U
+    def foldLeft[U](u: U)(f: (U, T) => U): U
   }
   case object MyNil extends MyList[Nothing] {
     override def foldRight[U](u: U)(f: (Nothing, U) => U) = u
+    override def foldLeft[U](u: U)(f: (U, Nothing) => U) = u
   }
   case class MyCons[+T](head: T, tail: MyList[T]) extends MyList[T] {
     override def foldRight[U](u: U)(f: (T, U) => U) = f(head, tail.foldRight(u)(f))
+    override def foldLeft[U](u: U)(f: (U, T) => U) = tail.foldLeft(f(u, head))(f)
   }
 
   object MyList {
     def apply[T](xs: T*): MyList[T] = xs.foldRight(MyNil: MyList[T]){ MyCons(_, _) }
 
-    def toString[T](list: MyList[T]): String = {
-      val buff = new java.lang.StringBuilder()
-      def f(list: MyList[T]): Unit = list match {
-        case MyNil => ;
-        case MyCons(x, xs) =>
-          buff.append(x).append(". ")
-          f(xs)
-      }
-      f(list)
-      return buff.toString()
-    }
+    def toString[T](list: MyList[T]): String =
+      list.foldLeft(new java.lang.StringBuilder()){ (buff, item) =>
+        buff.append(item).append(". ")
+      }.toString()
   }
 
   // ---- ---- ---- define MyMonad ---- ---- ----
