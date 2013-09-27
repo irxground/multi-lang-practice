@@ -18,7 +18,9 @@ module Monadaa
   @regist = {}
 
   module_function
-  def [](klass) @regist[klass] end
+  def [](klass)
+    @regist[klass] or raise "#{klass} is not a Monadaa instance."
+  end
 
   def register(klass, &block)
     obj = Object.new
