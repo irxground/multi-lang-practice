@@ -15,7 +15,7 @@ let rec fold_left_my_list f seed = function
 let string_of_my_list string_of_a =
   fold_left_my_list (fun str a -> str ^ (string_of_a a) ^ ". ") ""
 
-(* ---- ---- ---- define MyMonad ---- ---- ---- *)
+(* ---- ---- ---- define Monadaa and use ---- ---- ---- *)
 module type Monadaa = sig
   type 'a m
   val map:  ('a -> 'b  ) -> 'a m -> 'b m

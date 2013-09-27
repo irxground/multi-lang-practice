@@ -14,6 +14,16 @@ namespace :build do
     sh "mkdir -p #{outdir}"
     sh "ocamlc -o #{t.name} #{t.prerequisites.join ' '}"
   end
+
+  file 'bin/cpp/my_monad' => 'src/main/cpp/my_monad.cpp' do |t|
+    # cc = 'clang++ -std=c++11 -stdlib=libc++ -Weverything'
+    cc = 'clang++ -std=c++11 -stdlib=libc++'
+    # cc = 'g++ -std=c++0x'
+    # cc = 'g++'
+    outdir = File.dirname(t.name)
+    sh "mkdir -p #{outdir}"
+    sh "#{cc} -o #{t.name} #{t.prerequisites.join ' '}"
+  end
 end
 
 namespace :run do
@@ -25,6 +35,21 @@ namespace :run do
   task :ml do
     f = 'src/main/ocaml/MyMonad.ml'
     sh "ocaml #{f}"
+  end
+
+  task :d do
+    f = 'src/main/d/MyMonad.d'
+    sh "dmd -run #{f}"
+  end
+
+  task :cpp => 'bin/cpp/my_monad' do |t|
+    bin = t.prerequisites[0]
+    sh bin
+  end
+
+  task :rb do
+    f = 'src/main/ruby/my_monad.rb'
+    sh "ruby #{f}"
   end
 end
 
