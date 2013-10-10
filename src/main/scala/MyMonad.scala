@@ -26,12 +26,15 @@ object Program {
   }
 
   // ---- ---- ---- define MyMonad ---- ---- ----
-  trait Monadaa[M[_]] {
-    def map [A, B](m: M[A])(f: A =>   B ): M[B]
-    def bind[A, B](m: M[A])(f: A => M[B]): M[B]
+  trait Functoo[F[_]] {
+    def map [A, B](f: F[A])(fun: A => B): F[B]
+  }
+  trait Monadaa[M[_]] extends Functoo[M] {
+    def bind[A, B](m: M[A])(fun: A => M[B]): M[B]
   }
 
-  def flat[M[_], A](x: M[A], y: M[A])(f: (A, A) => A)(implicit m: Monadaa[M]): M[A] = {
+  def flat[M[_]: Monadaa, A](x: M[A], y: M[A])(f: (A, A) => A): M[A] = {
+    val m = implicitly[Monadaa[M]]
     m.bind(x){ (xi: A) => m.map(y){ (yi: A) => f(xi, yi) } }
   }
 

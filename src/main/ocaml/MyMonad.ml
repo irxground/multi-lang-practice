@@ -16,13 +16,18 @@ let string_of_my_list string_of_a =
   fold_left_my_list (fun str a -> str ^ (string_of_a a) ^ ". ") ""
 
 (* ---- ---- ---- define Monadaa and use ---- ---- ---- *)
+module type Functoo = sig
+  type 'a f
+  val map: ('a -> 'b) -> 'a f -> 'b f
+end
+
 module type Monadaa = sig
   type 'a m
   val map:  ('a -> 'b  ) -> 'a m -> 'b m
   val bind: ('a -> 'b m) -> 'a m -> 'b m
 end
 
-module MonadaaUsage = functor (M: Monadaa) -> struct
+module MonadaaUsage(M: Monadaa) = struct
   let flat xs ys f =
     M.bind (fun x -> M.map (fun y -> f x y) ys) xs
 

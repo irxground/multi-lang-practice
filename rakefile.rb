@@ -27,6 +27,10 @@ namespace :build do
 end
 
 namespace :run do
+  task :scala do
+    sh "sbt run"
+  end
+
   task :hs do
     f = 'src/main/haskell/MyMonad.hs'
     sh "runhaskell #{f}"
